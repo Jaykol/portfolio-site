@@ -1,0 +1,22 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# cloudflare / wrangler
+.wrangler/
+.dev.vars
+
+# logs & os
+npm-debug.log*
+.DS_Store
+*.log
+
+# local source material (not part of the site)
+Jesutofunmi John AjekolaCV - IT.pdf
+Pasted *.png
+
+# claude code local settings
+.claude/

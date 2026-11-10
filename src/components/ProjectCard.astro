@@ -1,0 +1,32 @@
+---
+interface Props {
+  index: number;
+  title: string;
+  summary: string;
+  metric: string;
+  metricLabel: string;
+  tags: string[];
+  repo?: string;
+  internalLabel?: string;
+}
+const { index, title, summary, metric, metricLabel, tags, repo, internalLabel = 'internal' } = Astro.props;
+const Tag = repo ? 'a' : 'div';
+const linkAttrs = repo ? { href: repo, target: '_blank', rel: 'noopener noreferrer' } : {};
+const idx = String(index).padStart(2, '0');
+---
+<Tag class="card reveal" {...linkAttrs}>
+  <div class="idx">{idx}</div>
+  <div>
+    <h3>{title}</h3>
+    <p>{summary}</p>
+    <div class="tags">
+      {tags.map((t) => <span class="tag">{t}</span>)}
+    </div>
+  </div>
+  <div class="meta">
+    <div class="metric">{metric}<small>{metricLabel}</small></div>
+    {repo
+      ? <span class="repo">github ↗</span>
+      : <span class="norepo">{internalLabel}</span>}
+  </div>
+</Tag>

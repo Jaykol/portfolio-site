@@ -1,0 +1,15 @@
+# Cloudflare Workers config — deploys the built static site (./dist) as a
+# Worker with static assets, preserving your existing workers.dev URL.
+#
+# IMPORTANT: "name" must match your existing Worker so it deploys to the same
+# URL (https://portfolio.jaykol.workers.dev). If your current Worker is named
+# something else, change this to match, or run `npx wrangler deploy` once and
+# Cloudflare will create portfolio.<your-subdomain>.workers.dev.
+
+name = "portfolio"
+compatibility_date = "2025-11-01"
+
+# Serve the Astro build output as static assets. No server code required.
+[assets]
+directory = "./dist"
+not_found_handling = "404-page"

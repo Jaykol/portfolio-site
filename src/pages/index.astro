@@ -1,0 +1,233 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import {
+  profile, heroCols, about, stack, experience, certifications, education,
+} from '../data/site';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const current = projects.filter((p) => p.data.group === 'current');
+const devops = projects.filter((p) => p.data.group === 'devops');
+
+// tiny **bold** -> <strong> helper for editable copy
+const bold = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+---
+
+<Base>
+  <Nav />
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="ghost" aria-hidden="true">~/</div>
+      <p class="greet"><span class="inner">Hi,<br />I am {profile.shortName}.</span></p>
+      <h1 class="giant">
+        {profile.heading.map((line) => (
+          <span><span class="inner" set:html={line.replace(/^\+/, '<span class="plus">+</span>')} /></span>
+        ))}
+      </h1>
+      <div class="hero-cols">
+        <p><span class="lbl">Who</span>{heroCols.who}</p>
+        <p><span class="lbl">Focus</span><span set:html={bold(heroCols.focus)} /></p>
+        <p>
+          <span class="lbl">Reach</span>{profile.location} · open to remote<br />
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          <span class="avail"><span class="live" aria-hidden="true"></span> {profile.available}</span>
+        </p>
+      </div>
+    </div>
+    <a class="explore" href="#work">Explore my work <span class="chev" aria-hidden="true">⌄</span></a>
+  </header>
+
+  <main>
+    <!-- ===================== WORK ===================== -->
+    <section id="work">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="k">~/ selected<b>-</b>work</span>
+          <span class="count">{projects.length} projects</span>
+        </div>
+
+        <div class="groupnote first reveal">Current role · Comercio Partners · 2023&ndash;now</div>
+        <div class="work">
+          {current.map((p) => (
+            <ProjectCard
+              index={p.data.order}
+              title={p.data.title}
+              summary={p.data.summary}
+              metric={p.data.metric}
+              metricLabel={p.data.metricLabel}
+              tags={p.data.tags}
+              repo={p.data.repo}
+              internalLabel={p.data.internalLabel}
+            />
+          ))}
+        </div>
+
+        <div class="groupnote reveal">Hands-on DevOps · open source on GitHub</div>
+        <div class="work">
+          {devops.map((p) => (
+            <ProjectCard
+              index={p.data.order}
+              title={p.data.title}
+              summary={p.data.summary}
+              metric={p.data.metric}
+              metricLabel={p.data.metricLabel}
+              tags={p.data.tags}
+              repo={p.data.repo}
+              internalLabel={p.data.internalLabel}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section id="about" class="about">
+      <div class="wrap">
+        <div class="sec-head reveal"><span class="k">~/ whoami</span></div>
+        <div class="about-grid">
+          <p class="big reveal">{about.big}</p>
+          {about.paragraphs.map((para) => (
+            <p class="reveal" set:html={bold(para)} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== STACK ===================== -->
+    <section id="stack">
+      <div class="wrap">
+        <div class="sec-head reveal"><span class="k">~/ stack</span><span class="count">what I build with</span></div>
+        <div class="stack">
+          {stack.map((g) => (
+            <div class="group reveal">
+              <h3>{g.title}</h3>
+              <div class="chips">
+                {g.items.map((it) => <span class="chip">{it}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EXPERIENCE ===================== -->
+    <section id="experience">
+      <div class="wrap">
+        <div class="sec-head reveal"><span class="k">~/ cat experience.log</span></div>
+        <div class="xp">
+          {experience.map((x) => (
+            <div class="row reveal">
+              <div class="when">
+                {x.now
+                  ? <>{x.when.replace('Present', '')}<span class="now">Present</span></>
+                  : x.when}
+              </div>
+              <div>
+                <h3>{x.role}</h3>
+                <div class="org">{x.org}</div>
+                <ul>{x.points.map((pt) => <li>{pt}</li>)}</ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CREDENTIALS ===================== -->
+    <section id="credentials">
+      <div class="wrap">
+        <div class="sec-head reveal"><span class="k">~/ cat credentials.txt</span></div>
+        <div class="creds">
+          <div class="reveal">
+            <h3 class="subk">Certifications &amp; training</h3>
+            <ul class="cert-list">
+              {certifications.map((c) => (
+                <li>
+                  <span class="name">{c.name}<span class="sub">{c.sub}</span></span>
+                  <span class="yr">{c.year}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="reveal">
+            <h3 class="subk">Education</h3>
+            <ul class="edu-list">
+              {education.map((e) => (
+                <li>
+                  <span><span class="deg">{e.deg}</span><span class="school">{e.school}</span></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section id="contact" class="contact">
+      <div class="wrap">
+        <div class="sec-head reveal" style="border:0;padding:0;margin-bottom:1.6rem;">
+          <span class="k">~/ contact<b>.sh</b></span>
+        </div>
+        <p class="bigcta reveal">
+          let's build something<br />that stays up.
+          <a href={`mailto:${profile.email}`}>say hello ↗</a>
+        </p>
+        <div class="foot reveal">
+          <a href={`mailto:${profile.email}`}>Email ↗</a>
+          <a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          <a href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <a href={profile.resume} target="_blank" rel="noopener noreferrer">Résumé (PDF) ↗</a>
+        </div>
+        <div class="foot-meta">
+          <span>{profile.name} · {profile.title} → DevSecOps</span>
+          <span>© 2026 · {profile.location}</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+    (function () {
+      var root = document.documentElement;
+      var tbtn = document.getElementById('themeBtn');
+      function cur() {
+        return root.getAttribute('data-theme') ||
+          (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      }
+      if (tbtn) {
+        tbtn.addEventListener('click', function () {
+          var next = cur() === 'dark' ? 'light' : 'dark';
+          root.setAttribute('data-theme', next);
+          try { localStorage.setItem('theme', next); } catch (e) {}
+        });
+      }
+
+      var nav = document.getElementById('nav');
+      if (nav) {
+        var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 10); };
+        addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var els = document.querySelectorAll('.reveal');
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('in'); });
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.12 });
+        els.forEach(function (el) { io.observe(el); });
+      }
+    })();
+  </script>
+</Base>
